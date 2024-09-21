@@ -24,11 +24,44 @@ public class PayStationImpl implements PayStation {
     
     private int insertedSoFar, timeBought, totalMoney;
     private Map<Integer, Integer> coinMap;
+    private RateStrategy rateStrategy;
 
     // Constructor initializes instance variables
     public PayStationImpl(){
         insertedSoFar = timeBought = totalMoney = 0;
         coinMap = new HashMap<>();
+        rateStrategy = new LinearOneRate();//Default rate strategy
+    }
+
+    public void setRateStrategy(RateStrategy rateStrategy) {
+        this.rateStrategy = rateStrategy;
+    }
+
+    public void changeRateStrategy(int option) {
+        switch (option){
+            case 1:
+                setRateStrategy(new LinearOneRate());
+                System.out.println("Rate Strategy changed to LinearOneRate");
+                break;
+            case 2:
+                setRateStrategy(new ProgressiveRate());
+                System.out.println("Rate Strategy changed to ProgressiveRate");
+                break;
+            case 3:
+                setRateStrategy(new AlternatingRate());
+                System.out.println("Rate Strategy changed to AlternatingRate");
+                break;
+            case 4:
+                setRateStrategy(new LinearTwoRate());
+                System.out.println("Rate Strategy changed to LinearTwoRate");
+                break;
+            case 5:
+                setRateStrategy(new AlternatingTwoRate());
+                System.out.println("Rate Strategy changed to AlternatingTwoRate");
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
     }
     
     @Override
@@ -52,7 +85,7 @@ public class PayStationImpl implements PayStation {
         coinMap.put(coinValue, coinMap.getOrDefault(coinValue, 0) + 1);
 
         insertedSoFar += coinValue;
-        timeBought = insertedSoFar / 5 * 2;
+        timeBought = rateStrategy.calculateTimeBought(insertedSoFar);
     }
 
     @Override

@@ -18,6 +18,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 
 public class PayStationImplTest {
 
@@ -286,4 +288,114 @@ public class PayStationImplTest {
         ps.buy();
         assertTrue("Coin map should be empty after buy", ps.cancel().isEmpty());
     }
+
+    @Test
+    public void testDefaultRate() throws IllegalCoinException
+    {
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        assertEquals("Should display 26 minutes", 26, ps.readDisplay());
+    }
+
+    @Test
+    public void testLinearRate() throws IllegalCoinException
+    {
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        ps.changeRateStrategy(1);
+        assertEquals("Should display 26 minutes", 26, ps.readDisplay());
+    }
+
+    @Test
+    public void testProgressiveRate() throws IllegalCoinException
+    {
+        ps.changeRateStrategy(2);
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        assertEquals("Should display 94 minutes", 94, ps.readDisplay());
+    }
+
+    @Test
+    public void testAlternatingRate() throws IllegalCoinException
+    {
+        // Determine the current day of the week
+        DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
+        int expected;
+
+        // Check if the current day is a weekend (Saturday or Sunday)
+        if (currentDay == DayOfWeek.SATURDAY || currentDay == DayOfWeek.SUNDAY) {
+            // Weekend - set rate strategy to option 1
+            ps.changeRateStrategy(3); // Assuming option 1 is the weekend strategy
+            expected = 106;
+        } else {
+            // Weekday - set rate strategy to option 2
+            ps.changeRateStrategy(3); // Assuming option 2 is the weekday strategy
+            expected = 94;
+        }
+        ps.changeRateStrategy(2);
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        ps.addPayment(25);
+        assertEquals("Should display 94 minutes if weekday or 106 if weekend.", expected, ps.readDisplay());
+    }
+
+    @Test
+    public void testLinearTwoRate() throws IllegalCoinException
+    {
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        ps.changeRateStrategy(1);
+        assertEquals("Should display 26 minutes", 26, ps.readDisplay());
+    }
+
+    @Test
+    public void testAlternatingTwoRate() throws IllegalCoinException
+    {
+        // Determine the current day of the week
+        DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
+        int expected;
+
+        // Check if the current day is a weekend (Saturday or Sunday)
+        if (currentDay == DayOfWeek.SATURDAY || currentDay == DayOfWeek.SUNDAY) {
+            // Weekend - set rate strategy to option 1
+            ps.changeRateStrategy(5); //
+            expected = 0;
+        } else {
+            // Weekday - set rate strategy to option 2
+            ps.changeRateStrategy(5);
+            expected = 26;
+        }
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.addPayment(25);
+        ps.changeRateStrategy(1);
+        assertEquals("Should display 26 minutes on weekdays or 0 min on weekends", expected, ps.readDisplay());
+    }
+
 }
