@@ -33,7 +33,7 @@ public class PayStationImpl implements PayStation {
         rateStrategy = new LinearOneRate();//Default rate strategy
     }
 
-    public void setRateStrategy(RateStrategy rateStrategy) {
+    private void setRateStrategy(RateStrategy rateStrategy) {
         this.rateStrategy = rateStrategy;
     }
 

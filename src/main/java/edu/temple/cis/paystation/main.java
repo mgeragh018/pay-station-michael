@@ -1,5 +1,6 @@
 //this is the file we will use for our main program
 package edu.temple.cis.paystation;
+import java.util.Map;
 import java.util.Scanner;
 
 public class main {
@@ -54,15 +55,49 @@ public class main {
                     break;
                 case 4:
                     System.out.println("Cancel selected.");
-                    // Logic for canceling the transaction will be added later
+                    // Logic for canceling the transaction
+                    Map<Integer, Integer> refundedCoins = payStation.cancel();
+                    if (refundedCoins.isEmpty()) {
+                        System.out.println("No coins to refund.");
+                    } else {
+                        System.out.println("Transaction canceled. Refunded coins:");
+                        refundedCoins.forEach((coinValue, count) ->
+                                System.out.println(count + " coin(s) of " + coinValue + " cents."));
+                    }
                     break;
                 case 5:
                     System.out.println("Empty (Admin) selected.");
-                    // Logic for emptying the pay station will be added later
+                    // Logic for emptying the pay station
+                    System.out.print("Are you an admin? Enter password(123): ");
+                    String password_input = scanner.next();
+
+                    if (password_input.equals("123")) {
+                        int totalEmptied = payStation.empty(); // Assuming empty() returns the total amount emptied
+                        System.out.println("Pay Station emptied: " + totalEmptied + " cents.");
+                    } else {
+                        System.out.println("Incorrect password. Access denied.");
+                    }
                     break;
                 case 6:
                     System.out.println("Change Rate Strategy (Admin) selected.");
-                    // Logic for changing the rate strategy will be added later
+                    System.out.print("Are you an admin? Enter password(123): ");
+                    String password_input_two = scanner.next();
+
+                    if (password_input_two.equals("123")) {
+                        // Prompt the admin to select a rate strategy
+                        System.out.println("Select a Rate Strategy:");
+                        System.out.println("1. LinearOneRate");
+                        System.out.println("2. ProgressiveRate");
+                        System.out.println("3. AlternatingRate");
+                        System.out.println("4. LinearTwoRate");
+                        System.out.println("5. AlternatingTwoRate");
+                        System.out.print("Enter your choice: ");
+                        int rateChoice = scanner.nextInt();
+                        // Call the changeRateStrategy method to change the strategy based on the input
+                        payStation.changeRateStrategy(rateChoice);
+                    } else {
+                        System.out.println("Incorrect password. Access denied.");
+                    }
                     break;
                 case 0:
                     System.out.println("Exiting the program. Thank you!");

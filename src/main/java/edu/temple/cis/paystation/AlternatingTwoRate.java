@@ -9,6 +9,8 @@ public class AlternatingTwoRate implements RateStrategy{
 
     @Override
     public int calculateTimeBought(int insertedSoFar) {
+
+        // Get the current day of the week
         DayOfWeek day = LocalDate.now().getDayOfWeek();
         if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) {
             return 0; //free on weekends

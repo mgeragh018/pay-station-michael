@@ -302,11 +302,11 @@ public class PayStationImplTest {
     @Test
     public void testLinearRate() throws IllegalCoinException
     {
+        ps.changeRateStrategy(1);
         ps.addPayment(25);
         ps.addPayment(5);
         ps.addPayment(10);
         ps.addPayment(25);
-        ps.changeRateStrategy(1);
         assertEquals("Should display 26 minutes", 26, ps.readDisplay());
     }
 
@@ -334,6 +334,7 @@ public class PayStationImplTest {
     {
         // Determine the current day of the week
         DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
+        // Print the current day of the week
         int expected;
 
         // Check if the current day is a weekend (Saturday or Sunday)
@@ -346,7 +347,6 @@ public class PayStationImplTest {
             ps.changeRateStrategy(3); // Assuming option 2 is the weekday strategy
             expected = 94;
         }
-        ps.changeRateStrategy(2);
         ps.addPayment(25);
         ps.addPayment(5);
         ps.addPayment(10);
@@ -365,12 +365,13 @@ public class PayStationImplTest {
     @Test
     public void testLinearTwoRate() throws IllegalCoinException
     {
+        ps.changeRateStrategy(4);
         ps.addPayment(25);
         ps.addPayment(5);
         ps.addPayment(10);
         ps.addPayment(25);
-        ps.changeRateStrategy(1);
-        assertEquals("Should display 26 minutes", 26, ps.readDisplay());
+
+        assertEquals("Should display 13 minutes", 13, ps.readDisplay());
     }
 
     @Test
@@ -378,6 +379,7 @@ public class PayStationImplTest {
     {
         // Determine the current day of the week
         DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
+
         int expected;
 
         // Check if the current day is a weekend (Saturday or Sunday)
@@ -394,8 +396,6 @@ public class PayStationImplTest {
         ps.addPayment(5);
         ps.addPayment(10);
         ps.addPayment(25);
-        ps.changeRateStrategy(1);
         assertEquals("Should display 26 minutes on weekdays or 0 min on weekends", expected, ps.readDisplay());
     }
-
 }
